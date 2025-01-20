@@ -106,6 +106,9 @@ This is so you can verify if a god pack is alive or not. Press the button or F8 
 __**Extract and Inject Accounts:**__
 In the Accounts folder you will find an inject and extract ahk script. This is so you can inject or extract XML data which is where the accounts log-in info is saved. Run it and input the required info.
 
+# Telegram API
+If you want to send messages to yourself via a Telegram bot, you need to edit the `Settings.ini` file by entering the required API values for `telegramToken`, `telegramChatID` and `telegramTopicID` (optional) variables.
+
 # Common Issues
 __XML file not saving__
 - Make sure you enable root in your emulator settings

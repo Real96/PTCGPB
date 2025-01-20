@@ -41,6 +41,13 @@ InitializeJsonFile() ; Create or open the JSON file
 	IniRead, swipeSpeed, Settings.ini, UserSettings, swipeSpeed, 600
 	IniRead, skipInvalidGP, Settings.ini, UserSettings, skipInvalidGP, Yes
 	IniRead, deleteMethod, Settings.ini, UserSettings, deleteMethod, Clicks
+	IniRead, telegramToken, Settings.ini, UserSettings, telegramToken, ""
+	IniRead, telegramChatID, Settings.ini, UserSettings, telegramChatID, ""
+	IniRead, telegramTopicID, Settings.ini, UserSettings, telegramTopicID, ""
+	IniRead, logMessageGpFound, Settings.ini, UserSettings, logMessageGpFound, ""
+	IniRead, logMessageGpInvalid, Settings.ini, UserSettings, logMessageGpInvalid, ""
+	IniRead, logMessageAccountBackup, Settings.ini, UserSettings, logMessageAccountBackup, ""
+	IniRead, logMessageStopInstance, Settings.ini, UserSettings, logMessageStopInstance, ""
 
 ; Main GUI setup
 ; Add the link text at the bottom of the GUI
