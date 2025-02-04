@@ -14,7 +14,7 @@ CoordMode, Pixel, Screen
 DllCall("AllocConsole")
 WinHide % "ahk_id " DllCall("GetConsoleWindow", "ptr")
 
-global winTitle, changeDate, failSafe, openPack, Delay, failSafeTime, StartSkipTime, Columns, failSafe, adbPort, scriptName, adbShell, adbPath, GPTest, StatusText, defaultLanguage, setSpeed, jsonFileName, pauseToggle, SelectedMonitorIndex, swipeSpeed, godPack, scaleParam, discordUserId, discordWebhookURL, skipInvalidGP, deleteMethod, packs, FriendID, friendIDs, Instances, username, friendCode, stopToggle, friended, runMain, showStatus
+global winTitle, changeDate, failSafe, openPack, Delay, failSafeTime, StartSkipTime, Columns, failSafe, adbPort, scriptName, adbShell, adbPath, GPTest, StatusText, defaultLanguage, setSpeed, jsonFileName, pauseToggle, SelectedMonitorIndex, swipeSpeed, godPack, scaleParam, discordUserId, discordWebhookURL, skipInvalidGP, deleteMethod, packs, FriendID, friendIDs, Instances, username, friendCode, stopToggle, friended, runMain, showStatus, telegramToken, telegramChatID, telegramTopicID, logMessageGpFound, logMessageGpInvalid, logMessageAccountBackup, logMessageStopInstance
 	scriptName := StrReplace(A_ScriptName, ".ahk")
 	winTitle := scriptName
 	pauseToggle := false
@@ -42,6 +42,13 @@ global winTitle, changeDate, failSafe, openPack, Delay, failSafeTime, StartSkipT
 	IniRead, heartBeat, %A_ScriptDir%\..\Settings.ini, UserSettings, heartBeat, 1
 	if(heartBeat)
 		IniWrite, 1, %A_ScriptDir%\..\HeartBeat.ini, HeartBeat, Instance%scriptName%
+	IniRead, telegramToken, %A_ScriptDir%\..\Settings.ini, UserSettings, telegramToken, ""
+	IniRead, telegramChatID, %A_ScriptDir%\..\Settings.ini, UserSettings, telegramChatID, ""
+	IniRead, telegramTopicID, %A_ScriptDir%\..\Settings.ini, UserSettings, telegramTopicID, ""
+	IniRead, logMessageGpFound, %A_ScriptDir%\..\Settings.ini, UserSettings, logMessageGpFound, ""
+	IniRead, logMessageGpInvalid, %A_ScriptDir%\..\Settings.ini, UserSettings, logMessageGpInvalid, ""
+	IniRead, logMessageAccountBackup, %A_ScriptDir%\..\Settings.ini, UserSettings, logMessageAccountBackup, ""
+	IniRead, logMessageStopInstance, %A_ScriptDir%\..\Settings.ini, UserSettings, logMessageStopInstance, ""
 		
 	adbPort := findAdbPorts(folderPath)
 	
@@ -1441,7 +1448,7 @@ CreateStatusMessage(Message, GuiName := 50, X := 0, Y := 80) {
 }
 
 checkBorder() {
-	global winTitle, discordUserId, skipInvalidGP, Delay, username
+	global winTitle, discordUserId, skipInvalidGP, Delay, username, logMessageGpFound, logMessageGpInvalid, logMessageAccountBackup, logMessageStopInstance
 	gpFound := false
 	invalidGP := false
 	searchVariation := 5
@@ -1505,32 +1512,26 @@ checkBorder() {
 				if(deleteMethod = "1Pack")
 					packs := 1
 				if(invalidGP) {
-					Condemn := ["Uh-oh!", "Oops!", "Not quite!", "Better luck next time!", "Yikes!", "That didn’t go as planned.", "Try again!", "Almost had it!", "Not your best effort.", "Keep practicing!", "Oh no!", "Close, but no cigar.", "You missed it!", "Needs work!", "Back to the drawing board!", "Whoops!", "That’s rough!", "Don’t give up!", "Ouch!", "Swing and a miss!", "Room for improvement!", "Could be better.", "Not this time.", "Try harder!", "Missed the mark.", "Keep at it!", "Bummer!", "That’s unfortunate.", "So close!", "Gotta do better!"]
-					Randmax := Condemn.Length()
-					Random, rand, 1, Randmax
-					Interjection := Condemn[rand]
-					logMessage := Interjection . "\n" . username . "(" . friendCode . ")\nFound an invalid pack in instance: " . scriptName . " (" . packs . " packs)\nBacking up to the Accounts folder and continuing..."
+					logMessage := username . "(" . friendCode . ")\n" . logMessageGpInvalid . scriptName . " (" . packs . " packs)\n" . logMessageAccountBackup
 					CreateStatusMessage(logMessage)
 					godPackLog = GPlog.txt
 					LogToFile(logMessage, godPackLog)
-					LogToDiscord(logMessage, Screenshot("Invalid"), discordUserId, saveAccount("Invalid"))
+					screenshotFile := Screenshot("Invalid")
+					LogToDiscord(logMessage, screenshotFile, discordUserId, saveAccount("Invalid"))
+					LogToTelegram(logMessage, screenshotFile)
 					break
 				}
-				else {
-					Praise := ["Congrats!", "Congratulations!", "GG!", "Whoa!", "Praise Helix! ༼ つ ◕_◕ ༽つ", "Way to go!", "You did it!", "Awesome!", "Nice!", "Cool!", "You deserve it!", "Keep going!", "This one has to be live!", "No duds, no duds, no duds!", "Fantastic!", "Bravo!", "Excellent work!", "Impressive!", "You're amazing!", "Well done!", "You're crushing it!", "Keep up the great work!", "You're unstoppable!", "Exceptional!", "You nailed it!", "Hats off to you!", "Sweet!", "Kudos!", "Phenomenal!", "Boom! Nailed it!", "Marvelous!", "Outstanding!", "Legendary!", "Youre a rock star!", "Unbelievable!", "Keep shining!", "Way to crush it!", "You're on fire!", "Killing it!", "Top-notch!", "Superb!", "Epic!", "Cheers to you!", "Thats the spirit!", "Magnificent!", "Youre a natural!", "Gold star for you!", "You crushed it!", "Incredible!", "Shazam!", "You're a genius!", "Top-tier effort!", "This is your moment!", "Powerful stuff!", "Wicked awesome!", "Props to you!", "Big win!", "Yesss!", "Champion vibes!", "Spectacular!"]
-
-					Randmax := Praise.Length()
-					Random, rand, 1, Randmax
-					Interjection := Praise[rand]
-					
+				else {					
 					if(godPack < 3)
-						logMessage := Interjection . "\n" . username . "(" . friendCode . ")\nFound a God pack found in instance: " . scriptName . " (" . packs . " packs)\nInstance is stopping."
+						logMessage := username . "(" . friendCode . ")\n" . logMessageGpFound . scriptName . " (" . packs . " packs)\n" . logMessageStopInstance
 					else if(godPack = 3)
-						logMessage := Interjection . "\n" . username . "(" . friendCode . ")\nFound a God Pack found in instance: " . scriptName . " (" . packs . " packs)\nBacking up to the Accounts folder and continuing..."
+						logMessage := username . "(" . friendCode . ")\n" . logMessageGpFound . scriptName . " (" . packs . " packs)\n" . logMessageAccountBackup
 					CreateStatusMessage(logMessage)
 					godPackLog = GPlog.txt
 					LogToFile(logMessage, godPackLog)
-					LogToDiscord(logMessage, Screenshot(), discordUserId, saveAccount())
+					screenshotFile := Screenshot()
+					LogToDiscord(logMessage, screenshotFile, discordUserId, saveAccount())
+					LogToTelegram(logMessage, screenshotFile)
 					gpFound := true
 					break
 				}
@@ -1747,6 +1748,32 @@ LogToDiscord(message, screenshotFile := "", ping := false, xmlFile := "") {
 			sleep, 250
 		}
 	}
+}
+
+LogToTelegram(message, screenshotFile := "") {
+	global telegramToken, telegramChatID, telegramTopicID
+	if (telegramToken != "" && telegramChatID != "") {
+		; Prepare the message data
+		url := "https://api.telegram.org/bot" . telegramToken
+		params := "?chat_id=" . telegramChatID . "&message_thread_id=" . telegramTopicID . "&text=" . message
+		
+
+		; Create the HTTP request object
+		whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+		whr.Open("GET", url . "/sendMessage" . params, false)
+		whr.Send()
+
+		; If an image file is provided, send it
+		if (screenshotFile != "") {
+			; Check if the file exists
+			if (FileExist(screenshotFile)) {
+				; Send the image using curl
+				image_url := url . "/sendPhoto"
+				curlCommand := "curl -F ""photo=@" . screenshotFile . """ -F ""chat_id=" . telegramChatID . """ -F ""message_thread_id=" . telegramTopicID . """ " . image_url
+				RunWait, %curlCommand%,, Hide
+            }
+        }
+    }
 }
 	; Pause Script
 	PauseScript:

@@ -53,6 +53,13 @@ global FriendID
 	IniRead, deleteMethod, Settings.ini, UserSettings, deleteMethod, 3Pack
 	IniRead, runMain, Settings.ini, UserSettings, runMain, 1
 	IniRead, heartBeat, Settings.ini, UserSettings, heartBeat, 0
+	IniRead, telegramToken, Settings.ini, UserSettings, telegramToken, ""
+	IniRead, telegramChatID, Settings.ini, UserSettings, telegramChatID, ""
+	IniRead, telegramTopicID, Settings.ini, UserSettings, telegramTopicID, ""
+	IniRead, logMessageGpFound, Settings.ini, UserSettings, logMessageGpFound, ""
+	IniRead, logMessageGpInvalid, Settings.ini, UserSettings, logMessageGpInvalid, ""
+	IniRead, logMessageAccountBackup, Settings.ini, UserSettings, logMessageAccountBackup, ""
+	IniRead, logMessageStopInstance, Settings.ini, UserSettings, logMessageStopInstance, ""
 ; Main GUI setup
 ; Add the link text at the bottom of the GUI
 

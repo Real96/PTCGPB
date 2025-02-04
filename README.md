@@ -12,3 +12,6 @@ https://buymeacoffee.com/aarturoo
 Join the discord for an updated guide: https://discord.gg/C9Nyf7P4sT Translations are being worked on so if there isn't an updated guide in your language then use the express install English guide: https://discord.com/channels/1330305075393986703/1335717204989055087
 
 A guide will be posted here in the future.
+
+# Telegram API
+If you want to send messages to yourself via a Telegram bot, you need to edit the `Settings.ini` file by entering the required API values for `telegramToken`, `telegramChatID` and `telegramTopicID` (optional) variables.
